@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Servet SLU2</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#232323">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Servet SLU2">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <style>
+    html, body { margin: 0; height: 100%; background: #232323; overflow: hidden; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
+    iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #f3f4f6; }
+
+    /* Pantalla de inicio mientras carga */
+    #splash { position: fixed; inset: 0; background: #232323; color: #fff; display: flex; flex-direction: column;
+              align-items: center; justify-content: center; gap: 18px; z-index: 10; transition: opacity .4s; }
+    #splash.oculto { opacity: 0; pointer-events: none; }
+    #splash img { width: 180px; }
+    #splash h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: .3px; }
+    #splash p { margin: 0; font-size: 14px; opacity: .65; }
+    .barra { width: 180px; height: 4px; background: #3a3a3a; border-radius: 2px; overflow: hidden; }
+    .barra div { width: 40%; height: 100%; background: #e30613; animation: carga 1.1s ease-in-out infinite; }
+    @keyframes carga { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+
+    #offline { display: none; position: fixed; inset: 0; background: #232323; color: #fff; z-index: 20;
+               flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 20px; }
+    #offline button { padding: 12px 22px; border: 0; border-radius: 8px; background: #e30613; color: #fff; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div id="splash">
+    <img src="icon-512.png" alt="Servet">
+    <h1>San Luis Unidad 2</h1>
+    <p>Tablero de Líneas de Producción</p>
+    <div class="barra"><div></div></div>
+  </div>
+
+  <div id="offline">
+    <img src="icon-192.png" alt="" width="120">
+    <h2 style="margin:0">Sin conexión</h2>
+    <p style="margin:0;opacity:.7">Revisá el Wi-Fi de la tablet y volvé a intentar.</p>
+    <button onclick="location.reload()">Reintentar</button>
+  </div>
+
+  <script>
+    // ▼▼▼ PEGAR ACÁ LA URL DE LA APLICACIÓN WEB DE APPS SCRIPT (la que termina en /exec) ▼▼▼
+    const APP_URL = 'PEGAR_AQUI_LA_URL_EXEC';
+    // ▲▲▲
+
+    if (!navigator.onLine) {
+      document.getElementById('offline').style.display = 'flex';
+    } else {
+      const f = document.createElement('iframe');
+      f.src = APP_URL;
+      f.allow = 'fullscreen';
+      f.onload = () => setTimeout(() => document.getElementById('splash').classList.add('oculto'), 300);
+      document.body.appendChild(f);
+      setTimeout(() => document.getElementById('splash').classList.add('oculto'), 12000);
+    }
+    window.addEventListener('offline', () => document.getElementById('offline').style.display = 'flex');
+    window.addEventListener('online',  () => location.reload());
+
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
+</body>
+</html>
